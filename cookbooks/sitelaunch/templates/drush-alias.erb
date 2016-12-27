@@ -1,0 +1,36 @@
+<?php
+
+$site_url = "<%= @site_url %>";
+$site_alias = "<%= @site_alias %>";
+$site_directory = "<%= @site_directory %>";
+$site_code = "<%= @site_code %>";
+
+$repo_directory = '/var/www/himss_gh/docroot/sites/' . $site_code;
+$dbuser = 'root';
+$dbpass = 'root';
+
+foreach (array('himss', 'himssconference', 'himsschapter') as $site) {
+  $site_directory = $repo_directory . '/sites/' . $site_name;
+
+  $aliases[$site_alias . '.loc'] = array(
+    'uri' => $site_url,
+    'root' => $site_directory,
+    'db-allows-remote' => TRUE,
+    'path-aliases' => array(
+      '%files' => $site_directory . '/files',
+      '%dump-dir' => '/tmp',
+    ),
+    'databases' => array(
+      'default' => array(
+        'default' => array(
+        'database' => $site_alias,
+        'username' => 'root',
+        'password' => 'root',
+        'host' => php_sapi_name() == 'cli' ? '127.0.0.1' : 'localhost',
+        'port' => '',
+        'driver' => 'mysql',
+        'prefix' => '',
+      ),
+    ),
+  );
+);

@@ -1,0 +1,1 @@
+default['sitelaunch']['sitename'] = ''
