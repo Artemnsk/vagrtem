@@ -50,6 +50,9 @@ Vagrant.configure("2") do |config|
     end
   end
   config.vm.provision "chef_solo", run: "never" do |chef|
+    # VM_build.
+    chef.add_recipe "vm_build::default"
+    # Sitelaunch.
     chef.log_level = :warn
     chef.data_bags_path = 'data_bags'
     chef.json = {
