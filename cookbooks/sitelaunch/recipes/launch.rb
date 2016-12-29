@@ -22,4 +22,4 @@ include_recipe 'sitelaunch::set_drush'
 include_recipe 'sitelaunch::acquia_export_recent_backup'
 
 # 6. Notification to add new website URL into /etc/hosts.
-include_recipe 'sitelaunch::hosts_file'
+include_recipe 'sitelaunch::hosts_file_add'

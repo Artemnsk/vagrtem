@@ -3,3 +3,5 @@ Operations (--op) which supposed to be run with provision:
     Use for first website launch.
 - update
     Use to update DB and clear all caches.
+- remove
+    Removed website.
