@@ -1,1 +1,2 @@
-default['sitelaunch']['sitename'] = ''
+default['sitelaunch']['id'] = ''
+default['sitelaunch']['op'] = ''

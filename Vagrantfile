@@ -31,22 +31,30 @@ Vagrant.configure("2") do |config|
 
   # Load sitename.
   opts = GetoptLong.new(
-    ['--site', GetoptLong::REQUIRED_ARGUMENT]
+    ["--id", GetoptLong::REQUIRED_ARGUMENT],
+    ["--provision-with", GetoptLong::REQUIRED_ARGUMENT],
+    ["--op", GetoptLong::REQUIRED_ARGUMENT]
   )
-  sitename = ''
+  id = ''
+  op = ''
   opts.each do |opt, arg|
     case opt
-      when '--site'
-        sitename = arg
+      when "--id"
+        id = arg
+      when "--op"
+        op = arg
     end
   end
   config.vm.provision "chef_solo", run: "never" do |chef|
-    if (sitename != '')
-      chef.json = {
-        "sitelaunch" => {
-          "sitename" => sitename
-        }
+    chef.log_level = :warn
+    chef.data_bags_path = 'data_bags'
+    chef.json = {
+      "sitelaunch" => {
+        "id" => id,
+        "op" => op
       }
+    }
+    if (id != '' && op != '')
       chef.add_recipe "sitelaunch::default"
     end
   end

@@ -1,36 +1,31 @@
 <?php
 
 $site_url = "<%= @site_url %>";
-$site_alias = "<%= @site_alias %>";
-$site_directory = "<%= @site_directory %>";
-$site_code = "<%= @site_code %>";
+$drush_alias = "<%= @drush_alias %>";
+$database_name = "<%= @database_name %>";
+$database_user = "<%= @database_user %>";
+$database_password = "<%= @database_password %>";
+$website_dir_absolute = "<%= @website_dir_absolute %>";
 
-$repo_directory = '/var/www/himss_gh/docroot/sites/' . $site_code;
-$dbuser = 'root';
-$dbpass = 'root';
-
-foreach (array('himss', 'himssconference', 'himsschapter') as $site) {
-  $site_directory = $repo_directory . '/sites/' . $site_name;
-
-  $aliases[$site_alias . '.loc'] = array(
-    'uri' => $site_url,
-    'root' => $site_directory,
-    'db-allows-remote' => TRUE,
-    'path-aliases' => array(
-      '%files' => $site_directory . '/files',
-      '%dump-dir' => '/tmp',
-    ),
-    'databases' => array(
+$aliases[$drush_alias] = array(
+  'uri' => $site_url,
+  'root' => $website_dir_absolute,
+  'db-allows-remote' => TRUE,
+  'path-aliases' => array(
+    '%files' => $website_dir_absolute . '/files',
+    '%dump-dir' => '/tmp',
+  ),
+  'databases' => array(
+    'default' => array(
       'default' => array(
-        'default' => array(
-        'database' => $site_alias,
-        'username' => 'root',
-        'password' => 'root',
+        'database' => $database_name,
+        'username' => $database_user,
+        'password' => $database_password,
         'host' => php_sapi_name() == 'cli' ? '127.0.0.1' : 'localhost',
         'port' => '',
         'driver' => 'mysql',
         'prefix' => '',
       ),
     ),
-  );
+  ),
 );
