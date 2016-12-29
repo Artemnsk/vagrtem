@@ -15,3 +15,7 @@ end
 execute "Enable #{node['sitelaunch']['site_url']} site." do
   command "a2ensite #{node['sitelaunch']['site_url']}.conf"
 end
+
+execute "Restart apache2." do
+  command "service apache2 restart"
+end

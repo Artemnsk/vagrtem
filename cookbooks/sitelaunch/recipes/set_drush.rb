@@ -12,6 +12,7 @@ if (node['sitelaunch']['drush_alias'] != '')
       "database_user" => node['sitelaunch']['database']['user'],
       "database_password" => node['sitelaunch']['database']['password'],
       "website_dir_absolute" => "#{node['sitelaunch']['sites_dir']}/#{node['sitelaunch']['project_dir']}/#{node['sitelaunch']['drupal_dir']}/#{node['sitelaunch']['website_dir']}",
+      "drupal_dir_absolute" => "#{node['sitelaunch']['sites_dir']}/#{node['sitelaunch']['project_dir']}/#{node['sitelaunch']['drupal_dir']}",
     })
   end
   execute "Clear drush cache." do

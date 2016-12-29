@@ -9,5 +9,5 @@ log '/etc/hosts file reminder' do
     ************************************************\n
     ************************************************\n
     Why that was not automated? That's very insecure to perform actions on host machine. Don't be lazy, mate."
-  level :info
+  level :warn
 end

@@ -6,10 +6,11 @@ $database_name = "<%= @database_name %>";
 $database_user = "<%= @database_user %>";
 $database_password = "<%= @database_password %>";
 $website_dir_absolute = "<%= @website_dir_absolute %>";
+$drupal_dir_absolute = "<%= @drupal_dir_absolute %>";
 
 $aliases[$drush_alias] = array(
   'uri' => $site_url,
-  'root' => $website_dir_absolute,
+  'root' => $drupal_dir_absolute,
   'db-allows-remote' => TRUE,
   'path-aliases' => array(
     '%files' => $website_dir_absolute . '/files',

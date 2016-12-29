@@ -13,6 +13,8 @@ include_recipe 'sitelaunch::create_directory'
 # 3. Set up virtualhosts.
 include_recipe 'sitelaunch::site_enable'
 
+# TODO: create directories in files or fix permission problems?
+
 # 4. Drush-related stuff.
 include_recipe 'sitelaunch::set_drush'
 
