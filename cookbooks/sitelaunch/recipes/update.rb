@@ -6,10 +6,9 @@ include_recipe 'sitelaunch::get_site_vars'
 include_recipe 'sitelaunch::acquia_export_recent_backup'
 
 # 2. Clear all caches for website.
-# TODO: some flexible recipe?
 if (node['sitelaunch']['drush_alias'] != '')
   execute "Clear all caches for website." do
-    # In some reason chef_solo provisions don't properly run as vagrant user (consequently drush alias not be found).
-    command "su vagrant -l -c \"drush @#{node['sitelaunch']['drush_alias']} cc all\""
+    command "drush @#{node['sitelaunch']['drush_alias']} cc all"
+    user 'vagrant'
   end
 end

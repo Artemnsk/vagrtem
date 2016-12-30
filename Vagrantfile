@@ -49,8 +49,8 @@ Vagrant.configure("2") do |config|
         use_old_backup = true
     end
   end
-  config.vm.provision "chef_solo", run: "never" do |chef|
-    # VM_build.
+  config.vm.provision "chef_solo" do |chef|
+    # Build VM.
     chef.add_recipe "vm_build::default"
     # Sitelaunch.
     chef.log_level = :warn

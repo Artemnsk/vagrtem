@@ -1,6 +1,6 @@
 if (node['sitelaunch']['drush_alias'] != '')
   # Create drush file.
-  template "/home/vagrant/.drush/#{node['sitelaunch']['id']}.aliases.drushrc.php" do
+  template "/etc/drush/#{node['sitelaunch']['id']}.aliases.drushrc.php" do
     source 'drush-alias.erb'
     owner 'vagrant'
     group 'vagrant'

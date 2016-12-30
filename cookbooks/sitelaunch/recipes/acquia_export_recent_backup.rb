@@ -22,19 +22,24 @@ if (node['sitelaunch']['acquia'] != nil && node['sitelaunch']['drush_alias'] != 
       end
     end
     backup_filename = "#{params['realm']}-#{params['site']}-#{params['env']}.sql.gz"
+    backup_filename_sql = "#{params['realm']}-#{params['site']}-#{params['env']}.sql"
     # Do not download new backup if file already exists and use_old_backup option used.
     execute "Download recent backup." do
       command "wget -O /tmp/#{backup_filename} '#{recent_backup['link']}'"
       not_if {::File.exists?("/tmp/#{backup_filename}") && node['sitelaunch']['use_old_backup']}
     end
-    execute "Unzip downloaded backup and import via drush." do
-      # In some reason chef_solo provisions don't properly run as vagrant user (consequently drush alias not be found).
-      command "su vagrant -l -c \"gunzip -c /tmp/#{backup_filename} | drush @#{node['sitelaunch']['drush_alias']} sqlc\""
+    execute "Unzip downloaded backup." do
+      cwd "/tmp"
+      command "gunzip -f -k /tmp/#{backup_filename}"
     end
-    # Actually we always want to store one backup, why not. We can reapply it with --use-old-baclup option.
-    # execute "Remove backup." do
-    #   command "rm /tmp/#{backup_filename}"
-    # end
+    execute "Import via drush." do #--root='#{node['sitelaunch']['sites_dir']}/#{node['sitelaunch']['project_dir']}/#{node['sitelaunch']['drupal_dir']}' --uri='#{node['sitelaunch']['site_url']}'
+      command "drush @#{node['sitelaunch']['drush_alias']} sqlc < /tmp/#{backup_filename_sql}"
+      user 'vagrant'
+    end
+    # Delete sql file but keep archive.
+    file "/tmp/#{backup_filename_sql}" do
+      action :delete
+    end
     # TODO: warning/error when no backups available.
   end
 end
