@@ -19,9 +19,9 @@ end
 # Install Apache.
 apt_package "apache2"
 
-a2mods = 'rewrite'
-execute "a2enmods" do
-  command "a2enmod #{a2mods}"
+execute "a2enmod rewrite" do
+  command "a2enmod rewrite"
+  not_if {::File.exists?("/etc/apache2/mods-enabled/rewrite.load")}
 end
 
 # Check if mysql was already installed.
@@ -48,25 +48,27 @@ end
 # Install xdebug
 apt_package "php5-xdebug"
 
-# TODO: including doesn't work.
-# Create custom php.ini file in /var/www with overrides and custom variables.
-template "/var/www/php_custom.ini" do
-  source 'php_custom.erb'
-  owner 'vagrant'
-  group 'vagrant'
-  mode '0755'
-  # Restart apache if changed only.
-  notifies :restart, 'service[apache2]', :immediately
+# Move default php.ini into php.ini.orig. It will be used then.
+file "/etc/php5/apache2/php.ini.orig" do
+  owner 'root'
+  group 'root'
+  mode 0755
+  content ::File.open("/etc/php5/apache2/php.ini").read()
+  action :create
+  only_if {::File.exists?("/etc/php5/apache2/php.ini") && !::File.exists?("/etc/php5/apache2/php.ini.orig")}
 end
-# Include this custom file.
+# Create php.ini file from original + overrides and custom settings.
 template "/etc/php5/apache2/php.ini" do
-  source 'php_default.erb'
+  source 'phpini.erb'
   owner 'vagrant'
   group 'vagrant'
   mode '0755'
+  variables({
+    'phpini_orig_path' => "/etc/php5/apache2/php.ini.orig"
+  })
   # Restart apache if changed only.
   notifies :restart, 'service[apache2]', :immediately
-  not_if {File.readlines("/etc/php5/apache2/php.ini").grep(/Include \/var\/www\/php_custom\.ini/).size > 0}
+  only_if {::File.exists?("/etc/php5/apache2/php.ini.orig")}
 end
 
 # Install drush. See http://docs.drush.org/en/master/install/
@@ -92,6 +94,15 @@ end
 # phpmyadmin.
 apt_package "phpmyadmin"
 
+# Move default apache2.conf into apache2.conf.orig. It will be used then.
+file "/etc/apache2/apache2.conf.orig" do
+  owner 'root'
+  group 'root'
+  mode 0755
+  content ::File.open("/etc/apache2/apache2.conf").read()
+  action :create
+  only_if {::File.exists?("/etc/apache2/apache2.conf") && !::File.exists?("/etc/apache2/apache2.conf.orig")}
+end
 # Include phpmyadmin.
 template "/etc/apache2/apache2.conf" do
   source 'apache2conf.erb'
@@ -99,9 +110,9 @@ template "/etc/apache2/apache2.conf" do
   group 'vagrant'
   mode '0755'
   variables({
-    "default_apache2conf" => "/etc/apache2/apache2.conf",
+    "default_apache2conf" => "/etc/apache2/apache2.conf.orig",
   })
   # Restart apache if changed only.
   notifies :restart, 'service[apache2]', :immediately
-  not_if {File.readlines("/etc/apache2/apache2.conf").grep(/Include \/etc\/phpmyadmin\/apache\.conf/).size > 0}
+  only_if {::File.exists?("/etc/apache2/apache2.conf.orig")}
 end

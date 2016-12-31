@@ -14,8 +14,11 @@ if (node['sitelaunch']['drush_alias'] != '')
       "website_dir_absolute" => "#{node['sitelaunch']['sites_dir']}/#{node['sitelaunch']['project_dir']}/#{node['sitelaunch']['drupal_dir']}/#{node['sitelaunch']['website_dir']}",
       "drupal_dir_absolute" => "#{node['sitelaunch']['sites_dir']}/#{node['sitelaunch']['project_dir']}/#{node['sitelaunch']['drupal_dir']}",
     })
+    notifies :run, "execute[drush_cc_drush]", :immediately
   end
-  execute "Clear drush cache." do
+
+  execute "drush_cc_drush" do
     command "drush cc drush"
+    action :nothing
   end
 end

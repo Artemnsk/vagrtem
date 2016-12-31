@@ -10,12 +10,11 @@ template "/etc/apache2/sites-available/#{node['sitelaunch']['site_url']}.conf" d
     "sites_dir" => node['sitelaunch']['sites_dir'],
     "project_dir_absolute" => "#{node['sitelaunch']['sites_dir']}/#{node['sitelaunch']['project_dir']}/#{node['sitelaunch']['drupal_dir']}",
   })
+  notifies :run, "execute[ensite]", :immediately
 end
 
-execute "Enable #{node['sitelaunch']['site_url']} site." do
+execute "ensite" do
   command "a2ensite #{node['sitelaunch']['site_url']}.conf"
-end
-
-service "apache2" do
-  action :restart
+  action :nothing
+  notifies :restart, "service[apache2]", :immediately
 end
