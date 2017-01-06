@@ -22,5 +22,8 @@ include_recipe 'sitelaunch::set_drush'
 # 6. Export database from Acquia and import into local website DB.
 include_recipe 'sitelaunch::acquia_export_recent_backup'
 
-# 7. Notification to add new website URL into /etc/hosts.
+# 7. Set admin password for website.
+include_recipe 'sitelaunch::set_admin_password'
+
+# 8. Notification to add new website URL into /etc/hosts.
 include_recipe 'sitelaunch::hosts_file_add'
