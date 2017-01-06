@@ -116,3 +116,22 @@ template "/etc/apache2/apache2.conf" do
   notifies :restart, 'service[apache2]', :immediately
   only_if {::File.exists?("/etc/apache2/apache2.conf.orig")}
 end
+
+# TODO: set frequency.
+# nodejs-related stuff.
+apt_package "nodejs"
+apt_package "npm"
+apt_package "nodejs-legacy" # https://github.com/nodejs/node-v0.x-archive/issues/3911
+bash 'Update npm and nodejs to latest versions.' do
+  code <<-EOH
+    npm install npm@latest -g
+    npm cache clean -f
+    npm install -g n
+    n stable
+  EOH
+end
+bash 'Install some npm packages globally.' do
+  code <<-EOH
+    npm install -g gulp
+  EOH
+end
