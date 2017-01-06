@@ -5,8 +5,8 @@ if (node['sitelaunch']['acquia'] != nil && node['sitelaunch']['drush_alias'] != 
   params = node['sitelaunch']['acquia']
 
   # todo: rename.
-  backup_filename = "#{params['realm']}-#{params['site']}-#{params['env']}.sql.gz"
-  backup_filename_sql = "#{params['realm']}-#{params['site']}-#{params['env']}.sql"
+  backup_filename = "#{node['sitelaunch']['id']}-#{params['realm']}-#{params['site']}-#{params['env']}.sql.gz"
+  backup_filename_sql = "#{node['sitelaunch']['id']}-#{params['realm']}-#{params['site']}-#{params['env']}.sql"
   can_proceed = false
   # If we don't want to use old backup or backup file doesn't exist we need to download it from Acquia first.
   if (!node['sitelaunch']['use_old_backup'] || !::File.exists?("/tmp/#{backup_filename}"))
