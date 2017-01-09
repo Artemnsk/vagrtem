@@ -69,6 +69,10 @@ if (node['sitelaunch']['acquia'] != nil && node['sitelaunch']['drush_alias'] != 
       cwd "/tmp"
       command "gunzip -f -k /tmp/#{backup_filename}"
     end
+    execute "Drop via drush." do
+      command "drush @#{node['sitelaunch']['drush_alias']} sql-drop -y"
+      user 'vagrant'
+    end
     execute "Import via drush." do
       command "drush @#{node['sitelaunch']['drush_alias']} sqlc < /tmp/#{backup_filename_sql}"
       user 'vagrant'
