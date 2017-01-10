@@ -12,10 +12,6 @@ apt_update 'all platforms' do
   action :periodic
 end
 
-# execute "apt-get update" do
-#   command "apt-get update"
-# end
-
 # Install Apache.
 apt_package "apache2"
 
@@ -37,6 +33,16 @@ end
 phps = ['php5', 'libapache2-mod-php5', 'php5-mcrypt', 'php5-mysql', 'php5-gmp', 'php5-gd', 'php5-dev', 'php5-curl', 'php5-common', 'php5-cli', 'php5-cgi']
 phps.each() do |php_item|
   apt_package php_item
+end
+
+# PHP enmods.
+php_mods = ['mcrypt']
+php_mods.each() do |php_mod|
+  # Enable php mod if wasn't enabled yet.
+  execute "PHP enmod #{php_mod}" do
+    command "php5enmod #{php_mod}"
+    not_if "php -m | grep -E '#{php_mod}'"
+  end
 end
 
 # Installing some helpful packages.
