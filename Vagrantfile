@@ -51,7 +51,7 @@ Vagrant.configure("2") do |config|
   end
   config.vm.provision "chef_solo" do |chef|
     # Build VM.
-    chef.add_recipe "vm_build::default"
+    chef.add_recipe "drupal_build::default"
     # Sitelaunch.
     chef.log_level = :warn
     chef.data_bags_path = 'data_bags'

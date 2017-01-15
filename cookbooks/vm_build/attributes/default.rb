@@ -1,1 +1,0 @@
-default['vm_build']['id'] = ''
