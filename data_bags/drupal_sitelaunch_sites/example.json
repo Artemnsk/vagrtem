@@ -1,0 +1,25 @@
+{
+  // General info.
+  "id": "example", // * Required field for Chef data bags. This parameter is unique so it used to generate any site-related file or anything (site-specific) else.
+  "sitename": "example", // * Common variable. Used for info.
+  "site_url": "loc.example.org", // * Website URL.
+  "drush_alias": "example.loc", // * Drush alias. Do not include "@" symbol.
+  // Directories.
+  "sites_dir": "/var/www/", // * Directory where websites installed.
+  "project_dir": "project_dir/", // * Directory relative to "sites_dir" where project is.
+  "drupal_dir": "relative_path_to_drupal_dir_inside_project/", // * Directory relative to "project_dir" where Drupal installed.
+  "website_dir": "sites/example/", // * Directory relative to "project_dir" (usually "sites/all/" if no multisiting.
+  // Database info.
+  "db_name": "example_db", // Database name. Ensure it is unique per data bags sitelaunch_sites.
+  "db_user": "root",
+  "db_password": "root",
+  // Insert "1" to turn Acquia support on. Leave empty otherwise.
+  "acquia_enable": "1",
+  // These fields content doesn't matter if acquia_enable is empty.
+  "acquia_user": "myname@gmail.com", // Your email.
+  "acquia_password": "", // Your Cloud API private key. More details about credentials https://docs.acquia.com/cloud/api/auth
+  "acquia_realm": "prod", // Realm. Usually prod. That doesn't mean that you break prod - you still will choose ENV.
+  "acquia_site": "example", // Name of site on Acquia.
+  "acquia_db_name": "example_db", // Usually db name is the same as "site". You don't need "raw" DB name here.
+  "acquia_env": "test" // ENV to use by default. TODO: --env option support?
+}

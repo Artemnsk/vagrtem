@@ -29,41 +29,12 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--cpus", "1"]
   end
 
-  # Load sitename.
-  opts = GetoptLong.new(
-    ["--id", GetoptLong::REQUIRED_ARGUMENT],
-    ["--provision-with", GetoptLong::REQUIRED_ARGUMENT],
-    ["--op", GetoptLong::REQUIRED_ARGUMENT],
-    ["--use-old-backup", GetoptLong::NO_ARGUMENT]
-  )
-  id = ''
-  op = ''
-  use_old_backup = false
-  opts.each do |opt, arg|
-    case opt
-      when "--id"
-        id = arg
-      when "--op"
-        op = arg
-      when "--use-old-backup"
-        use_old_backup = true
-    end
-  end
   config.vm.provision "chef_solo" do |chef|
     # Build VM.
     chef.add_recipe "drupal_build::default"
     # Sitelaunch.
+    chef.add_recipe "drupal_sitelaunch::default"
     chef.log_level = :warn
     chef.data_bags_path = 'data_bags'
-    chef.json = {
-      "sitelaunch" => {
-        "id" => id,
-        "op" => op,
-        "use_old_backup" => use_old_backup
-      }
-    }
-    if (id != '' && op != '')
-      chef.add_recipe "sitelaunch::default"
-    end
   end
 end

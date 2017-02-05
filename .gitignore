@@ -4,5 +4,5 @@ public
 .DS_store
 
 # Ignore all files from databags except examples.
-data_bags/sitelaunch_sites/*
-!data_bags/sitelaunch_sites/example.json
+data_bags/drupal_sitelaunch_sites/*
+!data_bags/drupal_sitelaunch_sites/example.json

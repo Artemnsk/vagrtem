@@ -3,13 +3,24 @@ apt_update 'all platforms' do
   action :periodic
 end
 
+# Some general handy packages.
+apt_package 'curl'
+apt_package 'vim'
+# This one used to parse json in shell scripts.
+apt_package 'jq'
+
 # Install Apache2.
 include_recipe "apache2::default"
 
-# TODO: install MySQL.
+# Enable mods.
+apache_module "rewrite"
 
 # Install PHP.
 include_recipe "php::default"
+# Reload apache2 to apply new php.ini settings.
+service 'apache2' do
+  action :reload
+end
 
 package "php5-curl" do
   action :install
@@ -23,142 +34,80 @@ end
 package "php5-mcrypt" do
   action :install
 end
-
-# Install Xdebug.
-
-php_pear "xdebug" do
-  # Specify that xdebug.so must be loaded as a zend extension
-  zend_extensions ['xdebug.so']
+package "php5-common" do
+  action :install
+end
+package "php5-cgi" do
+  action :install
+end
+package "php5-cli" do
+  action :install
+end
+package "php5-dev" do
+  action :install
+end
+package "php5-gmp" do
   action :install
 end
 
-#
-# # Install Apache.
-# apt_package "apache2"
-#
-# execute "a2enmod rewrite" do
-#   command "a2enmod rewrite"
-#   not_if {::File.exists?("/etc/apache2/mods-enabled/rewrite.load")}
+package "libapache2-mod-php5" do
+  action :install
+end
+
+# Start mysql service for drupal sites.
+# 8GB. TODO:
+opts = {"max_allowed_packet" => "8388608"}
+mysql_service 'drupal' do
+  port '3306'
+  version '5.5'
+  mysqld_options opts
+  initial_root_password node['custom']['mysql_root_password']
+  action [:create, :start]
+end
+
+# Install drush. See http://docs.drush.org/en/master/install/
+bash 'install drush' do
+  cwd '/tmp'
+  code <<-EOH
+    php -r \"readfile('https://s3.amazonaws.com/files.drush.org/drush.phar');\" > drush
+    php drush core-status
+    chmod +x drush
+    mv -f drush /usr/local/bin
+    mkdir /home/vagrant/.drush
+    mkdir /home/vagrant/.drush/cache
+    chmod 777 -R /home/vagrant/.drush/cache
+    drush cc drush
+    EOH
+  not_if {::File.exists?("/usr/local/bin/drush")}
+end
+# Create directory where all drush alias live. They could be used by any user in such way.
+directory "/etc/drush" do
+  mode '0777'
+end
+
+# Simply give all permissions to the entire /var/www folder. TODO: fix that.
+directory "/var/www" do
+  mode '0777'
+end
+
+# Install nodejs.
+include_recipe "nodejs"
+include_recipe "nodejs::npm"
+# Install gulp GLOBALLY. TODO:
+#nodejs_npm "gulp"
+
+# Install xdebug
+apt_package "php5-xdebug"
+
+# Install phpmyadmin. TODO:
+# apt_package "phpmyadmin" do
+#   options '-y'
 # end
 #
-# # Check if mysql was already installed.
-# mysql_was_installed = ::File.exist?('/usr/bin/mysql')
-# # Install MySQL.
-# apt_package "mysql-server"
-# # Set password for root user. # todo: notify?
-# execute "Set mysql password" do
-#   command "mysqladmin -u root password 'root'"
-#   not_if {mysql_was_installed}
-# end
-#
-# phps = ['php5', 'libapache2-mod-php5', 'php5-mcrypt', 'php5-mysql', 'php5-gmp', 'php5-gd', 'php5-dev', 'php5-curl', 'php5-common', 'php5-cli', 'php5-cgi']
-# phps.each() do |php_item|
-#   apt_package php_item
-# end
-#
-# # PHP enmods.
-# php_mods = ['mcrypt']
-# php_mods.each() do |php_mod|
-#   # Enable php mod if wasn't enabled yet.
-#   execute "PHP enmod #{php_mod}" do
-#     command "php5enmod #{php_mod}"
-#     not_if "php -m | grep -E '#{php_mod}'"
-#   end
-# end
-#
-# # Installing some helpful packages.
-# helpful_packages = ['curl', 'vim']
-# helpful_packages.each() do |pckg|
-#   apt_package pckg
-# end
-#
-# # Install xdebug
-# apt_package "php5-xdebug"
-#
-# # Move default php.ini into php.ini.orig. It will be used then.
-# file "/etc/php5/apache2/php.ini.orig" do
-#   owner 'root'
-#   group 'root'
-#   mode 0755
-#   content ::File.open("/etc/php5/apache2/php.ini").read()
-#   action :create
-#   only_if {::File.exists?("/etc/php5/apache2/php.ini") && !::File.exists?("/etc/php5/apache2/php.ini.orig")}
-# end
-# # Create php.ini file from original + overrides and custom settings.
-# template "/etc/php5/apache2/php.ini" do
-#   source 'phpini.erb'
-#   owner 'vagrant'
-#   group 'vagrant'
-#   mode '0755'
-#   variables({
-#     'phpini_orig_path' => "/etc/php5/apache2/php.ini.orig"
-#   })
-#   # Restart apache if changed only.
-#   notifies :restart, 'service[apache2]', :immediately
-#   only_if {::File.exists?("/etc/php5/apache2/php.ini.orig")}
-# end
-#
-# # Install drush. See http://docs.drush.org/en/master/install/
-# bash 'drush_install' do
-#   cwd '/tmp'
+# # Include PMA conf into apache.conf. TODO:
+# bash 'Put drlaunch into bash.bashrc' do
 #   code <<-EOH
-#     php -r \"readfile('https://s3.amazonaws.com/files.drush.org/drush.phar');\" > drush
-#     php drush core-status
-#     chmod +x drush
-#     mv -f drush /usr/local/bin
-#     mkdir /home/vagrant/.drush
-#     mkdir /home/vagrant/.drush/cache
-#     chmod 777 -R /home/vagrant/.drush/cache
-#     drush cc drush
-#     EOH
-#   not_if {::File.exists?("/usr/local/bin/drush")}
-# end
-# # Create directory where all drush alias live. They could be used by any user in such way.
-# directory "/etc/drush" do
-#   mode '0777'
-# end
-#
-# # phpmyadmin.
-# apt_package "phpmyadmin"
-#
-# # Move default apache2.conf into apache2.conf.orig. It will be used then.
-# file "/etc/apache2/apache2.conf.orig" do
-#   owner 'root'
-#   group 'root'
-#   mode 0755
-#   content ::File.open("/etc/apache2/apache2.conf").read()
-#   action :create
-#   only_if {::File.exists?("/etc/apache2/apache2.conf") && !::File.exists?("/etc/apache2/apache2.conf.orig")}
-# end
-# # Include phpmyadmin.
-# template "/etc/apache2/apache2.conf" do
-#   source 'apache2conf.erb'
-#   owner 'vagrant'
-#   group 'vagrant'
-#   mode '0755'
-#   variables({
-#     "default_apache2conf" => "/etc/apache2/apache2.conf.orig",
-#   })
-#   # Restart apache if changed only.
-#   notifies :restart, 'service[apache2]', :immediately
-#   only_if {::File.exists?("/etc/apache2/apache2.conf.orig")}
-# end
-#
-# # TODO: set frequency.
-# # nodejs-related stuff.
-# apt_package "nodejs"
-# apt_package "npm"
-# apt_package "nodejs-legacy" # https://github.com/nodejs/node-v0.x-archive/issues/3911
-# bash 'Update npm and nodejs to latest versions.' do
-#   code <<-EOH
-#     npm install npm@latest -g
-#     npm cache clean -f
-#     npm install -g n
-#     n stable
+#     echo "Include /etc/phpmyadmin/apache.conf" >> /etc/apache2/apache2.conf
 #   EOH
-# end
-# bash 'Install some npm packages globally.' do
-#   code <<-EOH
-#     npm install -g gulp
-#   EOH
+#   not_if 'grep "Include /etc/phpmyadmin/apache.conf" /etc/apache2/apache2.conf'
 # end
