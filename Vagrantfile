@@ -32,9 +32,9 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "chef_solo" do |chef|
     # Build VM.
-    chef.add_recipe "drupal_build::default"
-    # Sitelaunch.
-    chef.add_recipe "drupal_sitelaunch::default"
+    chef.add_recipe "angularjs_build::default"
+    # Applaunch.
+    chef.add_recipe "angularjs_applaunch::default"
     chef.log_level = :warn
     chef.data_bags_path = 'data_bags'
   end
