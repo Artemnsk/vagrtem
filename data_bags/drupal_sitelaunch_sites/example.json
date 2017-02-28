@@ -2,6 +2,7 @@
   // General info.
   "id": "example", // * Required field for Chef data bags. This parameter is unique so it used to generate any site-related file or anything (site-specific) else.
   "sitename": "example", // * Common variable. Used for info.
+  "ssl": "", // use "1" to enable SSL.
   "site_url": "loc.example.org", // * Website URL.
   "drush_alias": "example.loc", // * Drush alias. Do not include "@" symbol.
   // Directories.

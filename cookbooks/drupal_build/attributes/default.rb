@@ -1,6 +1,7 @@
 # Enable some mods by default. See https://supermarket.chef.io/cookbooks/apache2
 default['apache']['default_modules'] = ['rewrite', 'php5']
 default['apache']['mpm'] = 'prefork'
+default['apache']['listen'] = ["*:80", "*:443"]
 
 # PHP https://supermarket.chef.io/cookbooks/php/versions/2.2.0
 # Dirty trick to force php change apache2 php.ini, not cli.
@@ -13,6 +14,8 @@ default['php']['directives'] = {
     "xdebug.remote_enable" => 1,
     "xdebug.remote_autostart" => 1,
     "xdebug.remote_host" => "33.33.33.1",
+    "xdebug.max_nesting_level" => 200,
+    "extension" => "memcache.so",
 }
 
 default['nodejs']['install_method'] = 'binary'

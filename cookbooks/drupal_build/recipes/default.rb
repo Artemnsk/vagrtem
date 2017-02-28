@@ -8,12 +8,16 @@ apt_package 'curl'
 apt_package 'vim'
 # This one used to parse json in shell scripts.
 apt_package 'jq'
+# Install ssl-cert.
+apt_package 'ssl-cert'
 
 # Install Apache2.
 include_recipe "apache2::default"
 
 # Enable mods.
 apache_module "rewrite"
+apache_module "ssl"
+apache_module "socache_shmcb"
 
 # Install PHP.
 include_recipe "php::default"
@@ -47,6 +51,12 @@ package "php5-dev" do
   action :install
 end
 package "php5-gmp" do
+  action :install
+end
+package "memcached" do
+  action :install
+end
+package "php5-memcached" do
   action :install
 end
 

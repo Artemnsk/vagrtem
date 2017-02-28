@@ -60,6 +60,30 @@ sites.each do |site|
     mode '0755'
     owner 'vagrant'
   end
+  # SSL-related stuff.
+  cert_key_path = ''
+  cert_cert_path = ''
+  cert_chain_path = ''
+  if site_data['ssl'] == "1"
+    # Create self-signed SSL sertificate.
+    node.default[site_data['id']]['common_name'] = site_data['site_url']
+    node.default[site_data['id']]['ssl_cert']['source'] = 'self-signed'
+    node.default[site_data['id']]['ssl_key']['source'] = 'self-signed'
+    node.default[site_data['id']]['country'] = 'Russia'
+    node.default[site_data['id']]['city'] = 'Nsk'
+    node.default[site_data['id']]['state'] = 'Nsk'
+    node.default[site_data['id']]['organization'] = '.wrk'
+    node.default[site_data['id']]['department'] = 'Artem'
+    node.default[site_data['id']]['email'] = 'shelkov1991@gmail.com'
+
+    # Create certificate. TODO
+    cert = ssl_certificate site_data['id'] do
+      namespace node[site_data['id']]
+    end
+    cert_key_path = cert.key_path
+    cert_cert_path = cert.cert_path
+    cert_chain_path = cert.chain_path
+  end
   # conf file with virtualhost(-s).
   template "/etc/apache2/sites-available/#{site_data['site_url']}.conf" do
     source 'virtualhost.erb'
@@ -68,11 +92,16 @@ sites.each do |site|
     mode '0755'
     variables({
         "id" => site_data['id'],
+        "ssl" => site_data['ssl'],
         "server_name" => site_data['site_url'],
         "sites_dir" => site_data['sites_dir'],
         "project_dir_absolute" => "#{site_data['sites_dir']}/#{site_data['project_dir']}/#{site_data['drupal_dir']}",
+        "ssl_key" => cert_key_path,
+        "ssl_cert" => cert_cert_path,
+        "ssl_chain" => cert_chain_path,
     })
   end
+
   # Drush file.
   template "/etc/drush/#{site_data['id']}.aliases.drushrc.php" do
     source 'drush-alias.erb'
