@@ -36,6 +36,5 @@ Vagrant.configure("2") do |config|
     # Applaunch.
     chef.add_recipe "angularjs_applaunch::default"
     chef.log_level = :warn
-    chef.data_bags_path = 'data_bags'
   end
 end

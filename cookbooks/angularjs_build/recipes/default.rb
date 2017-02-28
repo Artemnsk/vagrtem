@@ -8,9 +8,23 @@ apt_package 'curl'
 apt_package 'vim'
 # This one used to parse json in shell scripts.
 apt_package 'jq'
+# Install ssl-cert.
+apt_package 'ssl-cert'
 
 # Install Apache2.
 include_recipe "apache2::default"
+
+# Enable mods.
+apache_module "ssl"
+apache_module "socache_shmcb"
+
+# Create self-signed SSL sertificate.
+cert = ssl_certificate 'certificate' do
+  namespace node['certificate']
+end
+node.default['certificate']['cert_key_path'] = cert.key_path
+node.default['certificate']['cert_cert_path'] = cert.cert_path
+node.default['certificate']['cert_chain_path'] = cert.chain_path
 
 # Simply give all permissions to the entire /var/www folder. TODO: fix that.
 directory "/var/www" do
@@ -20,7 +34,7 @@ end
 # Install nodejs.
 include_recipe "nodejs"
 include_recipe "nodejs::npm"
-# Install GLOBALLY. TODO: ifs.
+# Install GLOBALLY.
 # nodejs_npm "gulp"
 nodejs_npm "grunt"
 

@@ -1,16 +1,17 @@
+app_name = ''
 apps_dir = "/var/www/"
 default_branch_dir = "trunk/"
 sites = {
     'shared' => {
-      'project_dir' => "--app--_shared/",
+      'project_dir' => "#{app_name}_shared/",
     },
     'app' => {
-      'app_url' => "--app--app.loc",
-      'project_dir' => "--app--_app/",
+      'app_url' => "#{app_name}_app.loc",
+      'project_dir' => "#{app_name}_app/",
     },
     'portal' => {
-      'app_url' => "--app--portal.loc",
-      'project_dir' => "--app--_portal/",
+      'app_url' => "#{app_name}_portal.loc",
+      'project_dir' => "#{app_name}_portal/",
     }
 }
 
@@ -28,13 +29,6 @@ bash 'Copy project if empty' do
   EOH
   only_if { Dir.entries("#{apps_dir}/#{sites['shared']['project_dir']}").size <= 2 }
 end
-# c. npm install.
-# bash 'NPM install for project' do
-#   code <<-EOH
-#       npm install
-#   EOH
-#   cwd "#{apps_dir}/#{sites['shared']['project_dir']}/#{default_branch_dir}"
-# end
 ##########################################################################################
 
 
@@ -83,10 +77,13 @@ template "/etc/apache2/sites-available/#{sites['app']['app_url']}.conf" do
   group 'vagrant'
   mode '0755'
   variables({
-      "id" => '--app--_app',
+      "id" => "#{app_name}_app",
       "server_name" => sites['app']['app_url'],
       "apps_dir" => apps_dir,
       "project_dir_absolute" => "#{apps_dir}/#{sites['app']['project_dir']}/#{default_branch_dir}",
+      "ssl_key" => node['certificate']['cert_key_path'],
+      "ssl_cert" => node['certificate']['cert_cert_path'],
+      "ssl_chain" => node['certificate']['cert_chain_path'],
   })
 end
 # h. Enable site.
@@ -97,7 +94,7 @@ end
 # i. run grunt.
 bash 'Grunt' do
   code <<-EOH
-      grunt
+      sudo grunt
   EOH
   cwd "#{apps_dir}/#{sites['app']['project_dir']}/#{default_branch_dir}"
 end
