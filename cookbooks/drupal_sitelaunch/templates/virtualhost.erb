@@ -1,8 +1,11 @@
 <VirtualHost *:80>
 	ServerName <%= @server_name %>
+	<% @server_aliases.each do |server_alias| %>
+			ServerAlias <%= server_alias %>
+	<% end %>
 	DocumentRoot <%= @project_dir_absolute %>
 
-	<Directory "<%= @sites_dir %>">
+	<Directory "<%= @project_dir_absolute %>">
 		AllowOverride All
 		Require all granted
 	</Directory>

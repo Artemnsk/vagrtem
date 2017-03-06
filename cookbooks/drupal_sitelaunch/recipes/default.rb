@@ -94,6 +94,7 @@ sites.each do |site|
         "id" => site_data['id'],
         "ssl" => site_data['ssl'],
         "server_name" => site_data['site_url'],
+        "server_aliases" => site_data['server_aliases'].kind_of?(Array) ? site_data['server_aliases'] : {},
         "sites_dir" => site_data['sites_dir'],
         "project_dir_absolute" => "#{site_data['sites_dir']}/#{site_data['project_dir']}/#{site_data['drupal_dir']}",
         "ssl_key" => cert_key_path,
