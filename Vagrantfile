@@ -32,9 +32,9 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "chef_solo" do |chef|
     # Build VM.
-    chef.add_recipe "angularjs_build::default"
+    chef.add_recipe "appbuild::default"
     # Applaunch.
-    chef.add_recipe "angularjs_applaunch::default"
+    chef.add_recipe "applaunch::default"
     chef.log_level = :warn
   end
 end
