@@ -55,6 +55,9 @@ end
 sites.each do |site|
   # Copy content into appropriate files in user directory on node.
   site_data = data_bag_item('drupal_sitelaunch_sites', site)
+  # Skip for example.
+  next if site_data['id'] == 'example'
+  # Create json file for each site.
   file "/home/vagrant/drupal_sites/#{site}.json" do
     content site_data.raw_data.to_json()
     mode '0755'
