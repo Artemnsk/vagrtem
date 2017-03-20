@@ -21,3 +21,19 @@ default['php']['directives'] = {
 default['nodejs']['install_method'] = 'binary'
 
 default['custom']['mysql_root_password'] = 'root'
+
+default['java']['jdk_version'] = '8'
+
+default['solr']['version'] = '4.10.4'
+# default['solr']['url'] =
+# default['solr']['data_dir'] = "/opt/solr/example/solr"
+# default['solr']['dir'] =
+default['solr']['port'] = 8983
+# default['solr']['pid_file'] =
+# default['solr']['log_file'] =
+# default['solr']['user'] =
+# default['solr']['group'] =
+# Checksum was invalid in cookbook out of a box. See https://github.com/dwradcliffe/chef-solr/issues/36
+default['solr']['checksum'] = "ac3543880f1b591bcaa962d7508b528d7b42e2b5548386197940b704629ae851"
+default['solr']['install_java'] = true
+default['solr']['java_options'] = "-Xms128M -Xmx512M"

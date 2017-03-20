@@ -121,3 +121,10 @@ apt_package "php5-xdebug"
 #   EOH
 #   not_if 'grep "Include /etc/phpmyadmin/apache.conf" /etc/apache2/apache2.conf'
 # end
+
+# Install Java.
+# Note that Solr cookbook do it for you BUT it installs incompatible old JDK version 6. That's why I prefer do it here
+# ..manually to make you pay attention to it.
+include_recipe 'java::default'
+# Install Apache Solr.
+include_recipe "solr::default"
