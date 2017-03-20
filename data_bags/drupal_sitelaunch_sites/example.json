@@ -23,5 +23,7 @@
   "acquia_realm": "prod", // Realm. Usually prod. That doesn't mean that you break prod - you still will choose ENV.
   "acquia_site": "example", // Name of site on Acquia.
   "acquia_db_name": "example_db", // Usually db name is the same as "site". You don't need "raw" DB name here.
-  "acquia_env": "test" // ENV to use by default. TODO: --env option support?
+  "acquia_env": "test", // ENV to use by default. TODO: --env option support?
+  "solr_enable": "1",
+  "solr_core": "core_name"
 }

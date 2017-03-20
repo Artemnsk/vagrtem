@@ -119,4 +119,25 @@ sites.each do |site|
         "drupal_dir_absolute" => "#{site_data['sites_dir']}/#{site_data['project_dir']}/#{site_data['drupal_dir']}",
     })
   end
+
+  # Create Apache Solr core if needed.
+  if site_data['solr_enable'] == "1"
+    # If core doesn't exist which should mean that it is first run.
+    if !File.directory?("/etc/solr/#{site_data['solr_core']}")
+      # Create default core files.
+      FileUtils.cp_r '/opt/solr/example/solr/collection1', "/etc/solr/#{site_data['solr_core']}"
+      # Copy proper Drupal-related Apache Solr configs into newly created core directory.
+      remote_directory "Copy proper Drupal-related Apache Solr configs into newly created core directory" do
+        path "/etc/solr/#{site_data['solr_core']}/conf"
+        source "solr-conf-4"
+        overwrite true
+      end
+      # Create Apache Solr core by sending HTTP POST message.
+      bash "Create Apache Solr core" do
+        code <<-EOH
+            curl --data "action=CREATE&name=#{site_data['solr_core']}&instanceDir=/etc/solr/#{site_data['solr_core']}&config=solrconfig.xml&schema=schema.xml&dataDir=/etc/solr/#{site_data['solr_core']}/data/" http://localhost:8983/solr/admin/cores
+        EOH
+      end
+    end
+  end
 end
