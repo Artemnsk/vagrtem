@@ -128,3 +128,16 @@ apt_package "php5-xdebug"
 include_recipe 'java::default'
 # Install Apache Solr.
 include_recipe "solr::default"
+# Put default collection1 files into Apache Solr.
+# TODO: in some reason solr doesn't work without that.
+directory "/etc/solr/collection1" do
+  mode '0777'
+end
+# Create default core files.
+bash "Create default core files" do
+  code <<-EOH
+    mkdir /etc/solr/collection1
+    cp -r /opt/solr/example/solr/collection1/* /etc/solr/collection1/
+  EOH
+  not_if {::File.exists?("/etc/solr/collection1")}
+end

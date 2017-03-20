@@ -127,8 +127,15 @@ sites.each do |site|
   if site_data['solr_enable'] == "1"
     # If core doesn't exist which should mean that it is first run.
     if !File.directory?("/etc/solr/#{site_data['solr_core']}")
+      directory "/etc/solr/#{site_data['solr_core']}" do
+        mode '0777'
+      end
       # Create default core files.
-      FileUtils.cp_r '/opt/solr/example/solr/collection1', "/etc/solr/#{site_data['solr_core']}"
+      bash "Create default core files" do
+        code <<-EOH
+            cp -r /opt/solr/example/solr/collection1/* /etc/solr/#{site_data['solr_core']}
+        EOH
+      end
       # Copy proper Drupal-related Apache Solr configs into newly created core directory.
       remote_directory "Copy proper Drupal-related Apache Solr configs into newly created core directory" do
         path "/etc/solr/#{site_data['solr_core']}/conf"
