@@ -4,7 +4,7 @@
   "sitename": "example", // * Common variable. Used for info.
   "ssl": "", // use "1" to enable SSL.
   "site_url": "loc.example.org", // * Website URL.
-  "server_aliases": [],
+  "server_alias": "",
   "drush_alias": "example.loc", // * Drush alias. Do not include "@" symbol.
   // Directories.
   "sites_dir": "/var/www/", // * Directory where websites installed.
