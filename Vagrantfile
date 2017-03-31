@@ -14,7 +14,9 @@ Vagrant.configure("2") do |config|
   config.vm.network :forwarded_port, guest: 80, host: 8080
   config.vm.network :forwarded_port, guest: 443, host: 443
   config.vm.network :forwarded_port, guest: 8983, host: 8983
-  
+  config.vm.network :forwarded_port, guest: 1337, host: 1337
+  config.vm.network :forwarded_port, guest: 3000, host: 3000
+
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
   config.vm.network :private_network, ip: "33.33.33.10"
@@ -32,9 +34,9 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "chef_solo" do |chef|
     # Build VM.
-    chef.add_recipe "angularjs_build::default"
+    chef.add_recipe "tan_build::default"
     # Applaunch.
-    chef.add_recipe "angularjs_applaunch::default"
+    #chef.add_recipe "tan_applaunch::default"
     chef.log_level = :warn
   end
 end

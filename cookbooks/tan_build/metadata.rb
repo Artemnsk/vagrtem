@@ -1,8 +1,7 @@
-name 'angularjs_build'
+name 'tan_build'
 version "1.0.0"
 
 # DEPENDENCIES.
-depends 'apache2', '~> 3.2.2'
 depends 'nodejs', '~> 3.0.0'
   # # nodejs.
   # depends 'homebrew', '~> 3.0.0'
@@ -22,4 +21,3 @@ depends 'nodejs', '~> 3.0.0'
   # depends 'yum-epel', '~> 2.1.1'
   #   # yum-epel
   #   depends 'compat_resource', '~> 12.16.3'
-depends 'ssl_certificate', '~> 2.1.0'
