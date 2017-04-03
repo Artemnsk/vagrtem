@@ -25,4 +25,5 @@ end
 # Install GLOBALLY.
 nodejs_npm "gulp"
 nodejs_npm "gulp-cli"
+nodejs_npm "firebase-tools"
 nodejs_npm "bower"
